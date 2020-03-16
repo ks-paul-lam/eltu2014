@@ -37,4 +37,3 @@ while (1):
     else:
         print('Invalid Input.')
         input('Press Enter to continue...')
-
