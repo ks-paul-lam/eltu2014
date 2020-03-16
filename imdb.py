@@ -6,7 +6,8 @@ def main():
     import predict
 
     title = input('Search by title: ')
-    omdbapi_url = 'http://www.omdbapi.com/?t=' + title + '&apikey=1fb69a60'
+    year = input('Year of title (Optional): ')
+    omdbapi_url = 'http://www.omdbapi.com/?t=' + title + '&y=' + year + '&apikey=1fb69a60'
     s = requests.session()
     r = s.get(omdbapi_url)
     omdbapi_reponse = json.loads(r.text)
