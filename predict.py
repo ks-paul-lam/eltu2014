@@ -1,4 +1,6 @@
-def main():
+def main(s, *args, **kwargs):
+    from random import seed
+    from random import randint
     from nltk.stem import WordNetLemmatizer
     import pickle
     import re
@@ -30,9 +32,18 @@ def main():
         y_predict = sentimental_clf.predict(X_test_tf)
         return y_predict
 
-    s = input("Input your review: ")
+    def print_menu(title, year, number_of_pos, number_of_neg, number_of_truth, number_of_fake, number_of_s):
+        print('Title: ', title, '\nYear: ', year, '\n')
+        print('1. Random Pos. Review (%.2f %%)' % (number_of_pos / number_of_truth * 100))
+        print('2. Random Neg. Review (%.2f %%)' % (number_of_neg / number_of_truth * 100))
+        print('3. Random Dec. Review (%.2f %%)' % (number_of_fake / number_of_s * 100))
+        print('4. Exit')
 
-    s = format_string(s)
+    if (s == []):
+        s = [input("Input your review: ")]
+    else:
+        title = kwargs.get('title', None)
+        year = kwargs.get('year', None)
 
     deceptive_vec = open('deceptive_vectorizer.pickle', 'rb')
     deceptive_tf_vect = pickle.load(deceptive_vec)
@@ -49,16 +60,75 @@ def main():
     sentimental_pkl = open('sentimental_mlmodel.pickle', 'rb')
     sentimental_clf = pickle.load(sentimental_pkl)
 
-    pred = deceptive_test_string(s)
+    number_of_s = len(s)
+    print(number_of_s)
 
-    if (pred == 'deceptive'):
-        print("This is a deceptive review.\n")
-    elif (pred == 'truth'):
-        sentimental_pred = sentimental_test_string(s)
-        if (sentimental_pred):
-            print("This a positive review.\n")
-        else:
-            print("This a negative review.\n")
+    if (number_of_s == 1):
+        print(s[0])
+
+        pred = deceptive_test_string(format_string(s[0]))
+
+        if (pred == 'deceptive'):
+            print("This is a deceptive review.\n")
+        elif (pred == 'truth'):
+            sentimental_pred = sentimental_test_string(format_string(s[0]))
+            if (sentimental_pred):
+                print("This is a positive review.\n")
+            else:
+                print("This is a negative review.\n")
+    else:
+        pred_truth = []
+        pred_fake = []
+        for line in s:
+            if(deceptive_test_string(format_string(line)) == 'truth'):
+                pred_truth.append(line)
+            elif (deceptive_test_string(format_string(line)) == 'deceptive'):
+                pred_fake.append(line)
+
+        number_of_truth = len(pred_truth)
+        number_of_fake = len(pred_fake)
+
+        result_pos = []
+        result_neg = []
+        for line in pred_truth:
+            sentimental_pred = sentimental_test_string(format_string(line))
+            if (sentimental_pred):
+                result_pos.append(line)
+                # print("This is a positive review.\n")
+            else:
+                result_neg.append(line)
+                # print("This is a negative review.\n")
+
+        number_of_pos = len(result_pos)
+        number_of_neg = len(result_neg)
+
+        seed(1)
+        while(1):
+            print_menu(title, year, number_of_pos, number_of_neg, number_of_truth, number_of_fake, number_of_s)
+            try:
+                choice = int(input('Your choice: '))
+            except ValueError:
+                choice = -1
+
+            if (choice == 1):
+                random_int = randint(0, number_of_pos)
+                print('----------------')
+                print(result_pos[random_int])
+                pass
+            elif(choice == 2):
+                random_int = randint(0, number_of_neg)
+                print('----------------')
+                print(result_neg[random_int])
+                pass
+            elif(choice == 3):
+                random_int = randint(0, number_of_fake)
+                print('----------------')
+                print(pred_fake[random_int])
+                pass
+            elif(choice == 4):
+                break
+            else:
+                print("Invalid Input.\n")
 
 
 if __name__ == '__main__':
