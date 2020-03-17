@@ -1,0 +1,7 @@
+bs4
+nltk
+pandas
+regex
+requests
+sklearn
+textblob

@@ -125,21 +125,21 @@ def main(s, *args, **kwargs):
                 choice = -1
 
             if (choice == 1):
-                random_int = randint(0, number_of_pos)
+                random_int = randint(0, number_of_pos - 1)
                 clear()
                 print('----------------')
                 print(result_pos[random_int])
                 print('----------------')
                 pass
             elif(choice == 2):
-                random_int = randint(0, number_of_neg)
+                random_int = randint(0, number_of_neg - 1)
                 clear()
                 print('----------------')
                 print(result_neg[random_int])
                 print('----------------')
                 pass
             elif(choice == 3):
-                random_int = randint(0, number_of_fake)
+                random_int = randint(0, number_of_fake - 1)
                 clear()
                 print('----------------')
                 print(pred_fake[random_int])
